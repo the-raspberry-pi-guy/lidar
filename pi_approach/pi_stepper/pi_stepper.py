@@ -19,7 +19,7 @@ class stepper_controller(object):
 		motor.Init()
 		motor.ResetEpo()
 
-	def move(self,count):
+	def move_steps(self,count):
 		# Reverse handling
 		if count < 0:
 			dir = -1
@@ -57,7 +57,7 @@ class stepper_controller(object):
 			motor.MotorsOff()
 			while True:
 				steps = input("Steps to move: ")
-				stepper_controller.move(self, steps)
+				stepper_controller.move_steps(self, steps)
 		except KeyboardInterrupt:
 			motor.MotorsOff()
 
