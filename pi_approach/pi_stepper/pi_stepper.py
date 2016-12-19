@@ -7,12 +7,12 @@ import time
 
 motor = PicoBorgRev.PicoBorgRev()
 
-class stepper(object):
+class stepper_controller(object):
 	""" An all-powerful stepper motor controller"""
 	
-	step = -1
-	sequence = [[1.0, 1.0], [1.0, -1.0], [-1.0, -1.0], [-1.0, 1.0]] # Order for stepping
-	stepDelay = 0.002                                               # Delay between steps
+	current_step = -1
+	motor_sequence = [[1.0, 1.0], [1.0, -1.0], [-1.0, -1.0], [-1.0, 1.0]] # Order for stepping
+	step_delay = 0.002                                               # Delay between steps
 
 
 	def __init__(self):
@@ -20,6 +20,7 @@ class stepper(object):
 		motor.ResetEpo()
 
 	def move(self,count):
+		# Reverse handling
 		if count < 0:
 			dir = -1
 			count *= -1
@@ -27,38 +28,38 @@ class stepper(object):
 			dir = 1
 		
 		while count > 0:
-			# Set a starting position if this is the first move
-		        if stepper.step == -1:
-            			drive = stepper.sequence[-1]
+			# If this is the first move, set starting position
+		        if stepper_controller.current_step == -1:
+            			drive = stepper_controller.motor_sequence[-1] # Access list from right
             			motor.SetMotor1(drive[0])
             			motor.SetMotor2(drive[1])
-            			stepper.step = 0
+            			stepper_controller.current_step = 0
         		else:
-            			stepper.step += dir
+            			stepper_controller.current_step += dir
 
-			# Wrap step when we reach the end of the sequence
-	        	if stepper.step < 0:
-        	    		stepper.step = len(stepper.sequence) - 1
-        		elif stepper.step >= len(stepper.sequence):
-            			stepper.step = 0
+			# Wrap step when end of sequence reached
+	        	if stepper_controller.current_step < 0:
+        	    		stepper_controller.current_step = len(stepper_controller.motor_sequence) - 1
+        		elif stepper_controller.current_step >= len(stepper_controller.motor_sequence):
+            			stepper_controller.current_step = 0
 
         		# For this step set the required drive values
-        		if stepper.step < len(stepper.sequence):
-            			drive = stepper.sequence[stepper.step]
+        		if stepper_controller.current_step < len(stepper_controller.motor_sequence):
+            			drive = stepper_controller.motor_sequence[stepper_controller.current_step]
             			motor.SetMotor1(drive[0])
             			motor.SetMotor2(drive[1])
         		
-			time.sleep(stepper.stepDelay)
+			time.sleep(stepper_controller.step_delay)
         		count -= 1
 
 	def main(self):
 		try:
 			motor.MotorsOff()
 			while True:
-				stepper.steps = input("Steps to move: ")
-				stepper.move(self, stepper.steps)
+				steps = input("Steps to move: ")
+				stepper_controller.move(self, steps)
 		except KeyboardInterrupt:
 			motor.MotorsOff()
 
-stepp = stepper()
+stepp = stepper_controller()
 stepp.main()
