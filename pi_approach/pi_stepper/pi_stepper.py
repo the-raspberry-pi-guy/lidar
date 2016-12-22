@@ -32,28 +32,28 @@ class stepper_controller(object):
 			
 		while (count > 0):
 			# If this is the first move, set starting position
-		        if stepper_controller.current_step == -1:
-            			drive = stepper_controller.motor_sequence[-1] # Access list from right
+		        if self.current_step == -1:
+            			drive = self.motor_sequence[-1] # Access list from right
             			motor.SetMotor1(drive[0])
             			motor.SetMotor2(drive[1])
-            			stepper_controller.current_step = 0
+            			self.current_step = 0
         		else:
-            			stepper_controller.current_step += dir
+            			self.current_step += dir
 
 			# Wrap step when end of sequence reached
-	        	if stepper_controller.current_step < 0:
-        	    		stepper_controller.current_step = len(stepper_controller.motor_sequence) - 1
-        		elif stepper_controller.current_step >= len(stepper_controller.motor_sequence):
-            			stepper_controller.current_step = 0
+	        	if self.current_step < 0:
+        	    		self.current_step = len(stepper_controller.motor_sequence) - 1
+        		elif self.current_step >= len(stepper_controller.motor_sequence):
+            			self.current_step = 0
 
         		# For this step set the required drive values
-        		if stepper_controller.current_step < len(stepper_controller.motor_sequence):
+        		if self.current_step < len(stepper_controller.motor_sequence):
             			drive = stepper_controller.motor_sequence[stepper_controller.current_step]
             			motor.SetMotor1(drive[0])
             			motor.SetMotor2(drive[1])
         		
-			stepper_controller.progress += 1
-			degrees = progress*1.8
+			self.progress += 1
+			degrees = self.progress*1.8
 
 			# TRANSMIT POSITION DATA
 			transmit(SOME PARAMETERS)
