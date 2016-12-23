@@ -4,8 +4,12 @@
 
 import PicoBorgRev
 import time
+import sys
+sys.path.insert(0, "/home/pi/lidar/pi_approach/NRF24")
+import radio_library
 
 motor = PicoBorgRev.PicoBorgRev()
+r = radio_library.radio_comms()
 
 class stepper_controller(object):
 	""" An all-powerful stepper motor controller"""
@@ -19,9 +23,9 @@ class stepper_controller(object):
 
 	def __init__(self):
 		motor.Init()
-		motor.ResetEpo()
+		motor.ResetEpo()		
 
-	def move_steps_transceive(self,count):
+	def move_steps_txrx(self,count):
 		# Reverse handling
 		if count < 0:
 			dir = -1
@@ -56,29 +60,35 @@ class stepper_controller(object):
 			degrees = self.progress*1.8
 
 			# TRANSMIT POSITION DATA
-			transmit(SOME PARAMETERS)
+			# transmit(SOME PARAMETERS)
 
 			time.sleep(stepper_controller.step_delay)
         		count -= 1
 		
 		motor.MotorsOff()
-
-	def transmit(self):
-		# TRANSMIT PARAMETERS
 	
 	def main(self):
 		motor.MotorsOff()
-		while True:
-			if # receive #
-				if # single rotation #
-					steps = 200
-					stepper_controller.move_steps_transceive(self, steps)
-				if # cont rotation #
-					cont = true
-					while cont = true:
-						stepper_controller.move_steps_transceive(self, 1)
-						if # stop command #
-							cont = false
+		steps = input("How many steps would you like to rotate? ")
+		degrees = (str(steps * 1.8))
+		data_list = []
+		for i in range(0, len(degrees)):
+			data_list.append(degrees[i])
+		stepper_controller.move_steps_txrx(self, steps)
+		r.send_data(data_list)
+		
+#		while True:
+#			if # receive #
+#				if # single rotation #
+#					steps = 200
+#					stepper_controller.move_steps_transceive(self, steps)
+#				if # cont rotation #
+#					cont = true
+#					while cont = true:
+#						stepper_controller.move_steps_transceive(self, 1)
+#						if # stop command #
+#							cont = false
 
 stepp = stepper_controller()
-stepp.main()
+while True:
+	stepp.main()
