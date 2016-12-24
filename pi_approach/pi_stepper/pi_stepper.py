@@ -26,15 +26,16 @@ class stepper_controller(object):
 		motor.ResetEpo()		
 
 	def move_steps_txrx(self,count):
+		# data_list = []
 		# Reverse handling
 		if count < 0:
 			dir = -1
 			count *= -1
 		else:
 			dir = 1
-		
-			
+					
 		while (count > 0):
+			data_list = []
 			# If this is the first move, set starting position
 		        if self.current_step == -1:
             			drive = self.motor_sequence[-1] # Access list from right
@@ -52,15 +53,17 @@ class stepper_controller(object):
 
         		# For this step set the required drive values
         		if self.current_step < len(stepper_controller.motor_sequence):
-            			drive = stepper_controller.motor_sequence[stepper_controller.current_step]
+            			drive = stepper_controller.motor_sequence[self.current_step]
             			motor.SetMotor1(drive[0])
             			motor.SetMotor2(drive[1])
         		
 			self.progress += 1
-			degrees = self.progress*1.8
-
-			# TRANSMIT POSITION DATA
-			# transmit(SOME PARAMETERS)
+			if self.progress > 200:
+				self.progress -= 200
+			degrees = str(self.progress*1.8)
+			for i in range(0, len(degrees)):
+				data_list.append(degrees[i])
+			r.send_data(data_list)
 
 			time.sleep(stepper_controller.step_delay)
         		count -= 1
@@ -68,14 +71,8 @@ class stepper_controller(object):
 		motor.MotorsOff()
 	
 	def main(self):
-		motor.MotorsOff()
 		steps = input("How many steps would you like to rotate? ")
-		degrees = (str(steps * 1.8))
-		data_list = []
-		for i in range(0, len(degrees)):
-			data_list.append(degrees[i])
 		stepper_controller.move_steps_txrx(self, steps)
-		r.send_data(data_list)
 		
 #		while True:
 #			if # receive #
