@@ -2,11 +2,11 @@
 # Code to control the rotating stepper motor platform
 # Work in progress - Matthew Timmons-Brown
 
-import PicoBorgRev
 import time
 import sys
-sys.path.insert(0, "/home/pi/lidar/pi_approach/NRF24")
+sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
 import radio_library
+import PicoBorgRev
 
 motor = PicoBorgRev.PicoBorgRev()
 r = radio_library.radio_comms()
