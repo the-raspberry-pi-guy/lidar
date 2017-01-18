@@ -1,4 +1,14 @@
 # Touchscreen Kivy Interface for Lidar Project
 
-import kivy 
-kivy.require('1.0.6') # replace with your current kivy version
+from kivy.app import App
+from kivy.uix.widget import Widget
+
+class Init_Screen(Widget):
+    pass
+
+class LidarApp(App):
+    def build(self):
+        return Init_Screen()
+
+if __name__ == '__main__':
+    LidarApp().run()
