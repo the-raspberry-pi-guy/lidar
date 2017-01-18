@@ -1,23 +1,60 @@
 #:kivy 1.9.2
 
 <Init_Screen>
+	#:set bar_height_width 100
+        #:set black [0,0,0,1]
+	canvas.before:
+		Rectangle:
+			size:self.size
+			source:"Background.png"
+		Color:
+			rgba:black
+		Rectangle:
+			pos:[bar_height_width+5,self.height]
+			size:[5,-self.height]
+		Rectangle:
+			pos:[0,self.height-bar_height_width-10]
+			size:[self.width,5]
 	cols: 2
 	rows: 2
-	#:set bar_height_width 100
 	Image:
-		source: "logo.png"
+		source:"logo.png"
 		size_hint_x:None
 		size_hint_y:None
 		height:bar_height_width
 		width:bar_height_width
-	Button:
-		text:"Trial"
+	Label:
+		text:"Initialising. Power on stepper motor and distance modules now!"
+		color:black
+		font_size:35
+		text_size:self.size
+		halign:"center"
+		valign:"center"
 		size_hint_y:None
-		height: bar_height_width
-	Button:
-		text:"Distance"
+		height:bar_height_width
+	Switch:
+		active:True
 		size_hint_x:None
 		width:bar_height_width
-	Button:
-		text:"Receiver"
+	BoxLayout:
+		orientation:"horizontal"
+		Label:
+			markup:True
+			text:"[size=40]Receiver:[/size]\n\n[size=60][color=28A100]OK[/color][/size]"
+			halign:"center"
+			valign:"top"
+			color:black
+		Label:
+			markup:True
+			text:"[size=40]Stepper:[/size]\n\n[size=60][color=28A100]OK[/color][/size]"
+			halign:"center"
+			valign:"top"
+			color:black
+		Label:
+			markup:True
+			text:"[size=40]Distance:[/size]\n\n[size=60][color=28A100]OK[/color][/size]"
+			halign:"center"
+			valign:"top"
+			color:black
+
 		
