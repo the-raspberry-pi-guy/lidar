@@ -1,9 +1,12 @@
 # Touchscreen Kivy Interface for Lidar Project
 
 from kivy.app import App
-from kivy.uix.widget import Widget
+from kivy.uix.gridlayout import GridLayout
+from kivy.core.window import Window
 
-class Init_Screen(Widget):
+Window.clearcolor=(1,1,1,1)
+
+class Init_Screen(GridLayout):
     pass
 
 class LidarApp(App):

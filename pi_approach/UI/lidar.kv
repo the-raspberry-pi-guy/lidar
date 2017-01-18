@@ -1,10 +1,23 @@
-#:kivy 1.0.9
+#:kivy 1.9.2
 
 <Init_Screen>
-	canvas:
-		Line:
-			points:[0,self.height-65,self.width,self.height-65]
-			width:3
-		Line:
-			points:[65,self.height,65,0]
-			width:3
+	cols: 2
+	rows: 2
+	#:set bar_height_width 100
+	Image:
+		source: "logo.png"
+		size_hint_x:None
+		size_hint_y:None
+		height:bar_height_width
+		width:bar_height_width
+	Button:
+		text:"Trial"
+		size_hint_y:None
+		height: bar_height_width
+	Button:
+		text:"Distance"
+		size_hint_x:None
+		width:bar_height_width
+	Button:
+		text:"Receiver"
+		
