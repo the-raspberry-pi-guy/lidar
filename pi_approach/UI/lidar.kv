@@ -1,8 +1,11 @@
 #:kivy 1.9.2
 
+#:set bar_height_width 100
+#:set black [0,0,0,1]
+#:set yheight 480
+#:set xwidth 800
+
 <Init_Screen>
-	#:set bar_height_width 100
-        #:set black [0,0,0,1]
 	canvas.before:
 		Rectangle:
 			size:self.size
@@ -10,11 +13,11 @@
 		Color:
 			rgba:black
 		Rectangle:
-			pos:[bar_height_width+5,self.height]
-			size:[5,-self.height]
+			pos:[bar_height_width,yheight]
+			size:[5,-yheight]
 		Rectangle:
-			pos:[0,self.height-bar_height_width-10]
-			size:[self.width,5]
+			pos:[0,yheight-bar_height_width-10]
+			size:[xwidth,5]
 	cols: 2
 	rows: 2
 	Image:
@@ -57,4 +60,33 @@
 			valign:"top"
 			color:black
 
-		
+<Main_Screen>
+	canvas.before:
+		Rectangle:
+			size:self.size
+			source:"Background.png"
+		Color:
+			rgba:black
+		Rectangle:
+			pos:[bar_height_width,yheight]
+			size:[5,-yheight]
+		Rectangle:
+			pos:[0,yheight-bar_height_width-10]
+			size:[xwidth,5]
+
+	size:[xwidth,yheight]
+	Image:
+		source:"logo.png"
+		pos:[0,yheight-bar_height_width]
+		size_hint_x:None
+		size_hint_y:None
+		height:bar_height_width
+		width:bar_height_width
+	FloatLayout:
+		size: [100,100] #[bar_height_width,xwidth-bar_height_width]
+		pos:[100,100]
+		GridLayout:
+			cols:1
+			rows:1
+			Button:
+				text:"hi"
