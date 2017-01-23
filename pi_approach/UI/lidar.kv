@@ -83,8 +83,11 @@
 		height:bar_height_width
 		width:bar_height_width
 	FloatLayout:
-		size: [100,100] #[bar_height_width,xwidth-bar_height_width]
-		pos:[100,100]
+		size_hint_x:None
+		size_hint_y:None
+		width:xwidth-bar_height_width
+		height:yheight-bar_height_width
+		pos:[400,400]
 		GridLayout:
 			cols:1
 			rows:1
