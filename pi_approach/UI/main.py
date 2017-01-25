@@ -2,7 +2,6 @@
 
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.floatlayout import FloatLayout
 from kivy.core.window import Window
 
 #Window.clearcolor=(1,1,1,1)
@@ -10,7 +9,7 @@ from kivy.core.window import Window
 class Init_Screen(GridLayout):
 	pass
 
-class Main_Screen(FloatLayout):
+class Main_Screen(GridLayout):
 	pass
 
 class LidarApp(App):

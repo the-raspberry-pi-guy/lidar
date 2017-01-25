@@ -73,23 +73,42 @@
 		Rectangle:
 			pos:[0,yheight-bar_height_width-10]
 			size:[xwidth,5]
-
-	size:[xwidth,yheight]
+	cols: 2
+	rows: 2	
 	Image:
 		source:"logo.png"
-		pos:[0,yheight-bar_height_width]
 		size_hint_x:None
 		size_hint_y:None
+		valign:"top"
 		height:bar_height_width
 		width:bar_height_width
-	FloatLayout:
+	GridLayout:
+		cols: 1
+		rows: 1
 		size_hint_x:None
 		size_hint_y:None
+		height:bar_height_width+8
 		width:xwidth-bar_height_width
+		Button:
+			text:"test1"
+	GridLayout:
+		cols:1
+		rows:2
+		size_hint_x:None
+		size_hint_y:None
 		height:yheight-bar_height_width
-		pos:[400,400]
-		GridLayout:
-			cols:1
-			rows:1
-			Button:
-				text:"hi"
+		width:bar_height_width
+		Button:
+			text:"test2"
+	Scatter:
+		size_hint_x:None
+		size_hint_y:None
+		height:yheight-bar_height_width
+		width:xwidth-bar_height_width
+		canvas.before:
+			Rectangle:
+				size:[100,100]	
+#	FloatLayout:
+#		Button:
+#			text: "test3"
+
