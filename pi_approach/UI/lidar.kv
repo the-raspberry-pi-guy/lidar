@@ -82,14 +82,24 @@
 		height:bar_height_width
 		width:bar_height_width
 	GridLayout:
-		cols: 1
+		cols: 3
 		rows: 1
 		size_hint_x:None
 		size_hint_y:None
 		height:bar_height_width
 		width:xwidth-bar_height_width
+		Slider:
+			min:0
+			max:361
+			value:100
+			size_hint_x:None
+			width:4*bar_height_width
+		Label:
+			text:"test"
+			size_hint_x:None
+			width:20
 		Button:
-			text:"test1"
+			text:"SCAN"
 	GridLayout:
 		cols:1
 		rows:2
@@ -106,8 +116,4 @@
 		width:xwidth-bar_height_width
 		canvas.before:
 			Rectangle:
-				size:[100,100]	
-#	FloatLayout:
-#		Button:
-#			text: "test3"
-
+				size:[100,100]
