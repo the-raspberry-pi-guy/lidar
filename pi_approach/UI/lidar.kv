@@ -89,12 +89,14 @@
 		height:bar_height_width
 		width:xwidth-bar_height_width
 		Slider:
+			id: value_slider
 			min:0
 			max:361
-			value:100
+			on_value:root.change_value()
 			size_hint_x:None
 			width:4*bar_height_width
 		Label:
+			id: value_label
 			text:"test"
 			size_hint_x:None
 			width:20

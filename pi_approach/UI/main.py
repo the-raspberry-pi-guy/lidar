@@ -10,7 +10,11 @@ class Init_Screen(GridLayout):
 	pass
 
 class Main_Screen(GridLayout):
-	pass
+	def change_value(self, *args):
+		value_slider = self.ids['value_slider']
+		new_value = value_slider.value
+		value_label = self.ids['value_label']
+		value_label.text = str(new_value)
 
 class LidarApp(App):
 	def build(self):
