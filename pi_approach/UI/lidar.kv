@@ -93,6 +93,7 @@
 			min:0
 			max:361
 			step:2
+			value:0
 			on_value:root.change_value()
 			size_hint_x:None
 			width:4*bar_height_width
@@ -107,18 +108,21 @@
 			text:"SCAN"
 	GridLayout:
 		cols:1
-		rows:2
+		rows:4
 		size_hint_x:None
 		size_hint_y:None
-		height:yheight-bar_height_width-5
+		height:yheight-bar_height_width-10
 		width:bar_height_width
-		Button:
-			text:"test2"
+		padding:3
+		ToggleButton:
+			markup:True
+			text:"[size=18]Enable\nLidar\nModule[/size]"
+		ToggleButton:
+			markup:True
+			text:"[size=18]Enable\nCamera\nModule[/size]"
 	Scatter:
 		size_hint_x:None
 		size_hint_y:None
 		height:yheight-bar_height_width
 		width:xwidth-bar_height_width
-		canvas.before:
-			Rectangle:
-				size:[100,100]
+		# Make map into an image to display here
