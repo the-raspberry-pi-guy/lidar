@@ -40,12 +40,14 @@ class Server(object):
 	def setup_server(self):
 		try:
 			Server.s.bind((Server.HOST, Server.PORT))
+			print "Bind success"
 		except socket.error:
 			return "Bind failed"
 
-	def socket_connection(self):
+	def socket_reception(self):
 		Server.s.listen(5)
 		(connection, address) = Server.s.accept()
+		print str(connection) + " : " + str(address)
 		return (connection, address)
 
 	def receive_data(self, connection):
@@ -59,4 +61,9 @@ class Server(object):
 		connection.close()
 	
 if __name__ == "__main__":
-	LidarApp().run()
+	server = Server()
+	server.setup_server()
+	(connection, address) = server.socket_reception()
+	while True:
+		print server.receive_data(connection)
+	#LidarApp().run()
