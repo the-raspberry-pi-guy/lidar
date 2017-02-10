@@ -1,9 +1,12 @@
 # Touchscreen Kivy Interface for Lidar Project
 
 import socket
+import sys
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
+sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
+import serverxclient
 
 #Window.clearcolor=(1,1,1,1)
 
@@ -31,35 +34,6 @@ class LidarApp(App):
 	def build(self):
 		return Main_Screen()
 
-class Server(object):
-	"""A class that serves a server and nothing else"""
-	HOST = socket.gethostname() + ".local"
-	PORT = 12345
-	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-	def setup_server(self):
-		try:
-			Server.s.bind((Server.HOST, Server.PORT))
-			print "Bind success"
-		except socket.error:
-			return "Bind failed"
-
-	def socket_reception(self):
-		Server.s.listen(5)
-		(connection, address) = Server.s.accept()
-		print str(connection) + " : " + str(address)
-		return (connection, address)
-
-	def receive_data(self, connection):
-		data = connection.recv(4096)
-		return data
-
-	def send_data(self, connection, data):
-		connection.send(data)
-
-	def close_connection(self, connection):
-		connection.close()
-	
 if __name__ == "__main__":
 	server = Server()
 	server.setup_server()
