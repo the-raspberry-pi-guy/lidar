@@ -1,8 +1,10 @@
 # Touchscreen Kivy Interface for Lidar Project
 
 import socket
+import time
 import sys
 import subprocess
+import threading
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
@@ -13,13 +15,47 @@ import serverxclient as serv
 
 powerdown = ["sudo", "shutdown", "now"]
 
+distance = False
+stepper = False
+
+class Communication(threading.Thread):
+	server = serv.Server()
+
+	def run(self):
+		self.setup()
+		while distance == False:
+			(connection, address) = self.awaiting_socket()
+			self.test_socket(connection)
+
+	def setup(self):
+		Communication.server.setup_server()
+		print "SUCCESS ON BIND"
+	
+	def awaiting_socket(self):
+		print "AWAITING"
+		(connection, address) = Communication.server.socket_reception()
+		return (connection, address)
+	
+	def test_socket(self, connection):
+		Communication.server.send_data(connection,"VERIFY?")
+		data_back = Communication.server.receive_data(connection)
+		print data_back
+		if data_back == "DISTANCE!":
+			# set distance to OK
+			print "Distance is OK"
+			#global distance
+			#distance = True
+		if data_back == "STEPPER!":
+			# set stepper to OK
+			print "Stepper is OK"
+
 class InitScreen(Screen):
 	def power_off(self, *args):
 		onoffswitch = self.ids["onoffswitch"]
 		onoff_value = onoffswitch.active
 		if onoff_value == False:
 			subprocess.call(powerdown)
-
+		
 class MainScreen(Screen):
 	angle = 0	
 	def change_value(self, *args):
@@ -45,9 +81,7 @@ class LidarApp(App):
 		return application
 
 if __name__ == "__main__":
-#	server = serv.Server()
-#	server.setup_server()
-#	(connection, address) = server.socket_reception()
-#	while True:
-#		print server.receive_data(connection)
+	checker = Communication()
+	checker.daemon = True
+	checker.start()
 	LidarApp().run()

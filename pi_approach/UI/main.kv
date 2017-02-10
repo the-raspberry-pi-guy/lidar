@@ -10,7 +10,7 @@
 ScreenManagement:
 	transition: FadeTransition()
 	InitScreen:
-	MainScreen:
+	MainScreen:	
 
 <InitScreen>:
 	GridLayout:
@@ -64,8 +64,10 @@ ScreenManagement:
 				valign:"top"
 				color:black
 			Label:
+				id: distance_label
 				markup:True
 				text:"[size=40]Distance:[/size]\n\n[size=60][color=ff0000]NO[/color][/size]"
+				on_text:
 				halign:"center"
 				valign:"top"
 				color:black
@@ -120,7 +122,7 @@ ScreenManagement:
 				on_press:root.scan()
 		GridLayout:
 			cols:1
-			rows:4	
+			rows:2	
 			size_hint_x:None
 			size_hint_y:None
 			height:yheight-bar_height_width-10
