@@ -35,9 +35,9 @@ class LidarApp(App):
 		return Main_Screen()
 
 if __name__ == "__main__":
-	server = serv.Server()
-	server.setup_server()
-	(connection, address) = server.socket_reception()
-	while True:
-		print server.receive_data(connection)
-	#LidarApp().run()
+#	server = serv.Server()
+#	server.setup_server()
+#	(connection, address) = server.socket_reception()
+#	while True:
+#		print server.receive_data(connection)
+	LidarApp().run()
