@@ -6,7 +6,7 @@ from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
 sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
-import serverxclient
+import serverxclient as serv
 
 #Window.clearcolor=(1,1,1,1)
 
@@ -35,7 +35,7 @@ class LidarApp(App):
 		return Main_Screen()
 
 if __name__ == "__main__":
-	server = Server()
+	server = serv.Server()
 	server.setup_server()
 	(connection, address) = server.socket_reception()
 	while True:
