@@ -5,15 +5,17 @@ import sys
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
+from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
 import serverxclient as serv
 
 #Window.clearcolor=(1,1,1,1)
 
-class Init_Screen(GridLayout):
+class InitScreen(Screen):
 	pass
 
-class Main_Screen(GridLayout):
+class MainScreen(Screen):
 
 	angle = 0	
 
@@ -30,9 +32,14 @@ class Main_Screen(GridLayout):
 		print self.angle
 		# Scan through this angle
 
+class ScreenManagement(ScreenManager):
+	pass
+
+application = Builder.load_file("main.kv")
+
 class LidarApp(App):
 	def build(self):
-		return Main_Screen()
+		return application
 
 if __name__ == "__main__":
 #	server = serv.Server()
