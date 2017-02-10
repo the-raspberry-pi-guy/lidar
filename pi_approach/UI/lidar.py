@@ -2,6 +2,7 @@
 
 import socket
 import sys
+import subprocess
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
@@ -10,15 +11,17 @@ from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
 import serverxclient as serv
 
-#Window.clearcolor=(1,1,1,1)
+powerdown = ["sudo", "shutdown", "now"]
 
 class InitScreen(Screen):
-	pass
+	def power_off(self, *args):
+		onoffswitch = self.ids["onoffswitch"]
+		onoff_value = onoffswitch.active
+		if onoff_value == False:
+			subprocess.call(powerdown)
 
 class MainScreen(Screen):
-
 	angle = 0	
-
 	def change_value(self, *args):
 		value_slider = self.ids["value_slider"]
 		self.angle = int(value_slider.value)
