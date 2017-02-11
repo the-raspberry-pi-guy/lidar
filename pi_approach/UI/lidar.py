@@ -15,6 +15,7 @@ import serverxclient as serv
 
 powerdown = ["sudo", "shutdown", "now"]
 
+global distance
 distance = False
 stepper = False
 
@@ -35,7 +36,7 @@ class Communication(threading.Thread):
 		print "AWAITING"
 		(connection, address) = Communication.server.socket_reception()
 		return (connection, address)
-	
+
 	def test_socket(self, connection):
 		Communication.server.send_data(connection,"VERIFY?")
 		data_back = Communication.server.receive_data(connection)
@@ -43,11 +44,20 @@ class Communication(threading.Thread):
 		if data_back == "DISTANCE!":
 			# set distance to OK
 			print "Distance is OK"
-			#global distance
-			#distance = True
+			InitScreen.distance_on()
+			global distance
+			distance = True
 		if data_back == "STEPPER!":
 			# set stepper to OK
 			print "Stepper is OK"
+
+class DistanceStepperChecker(threading.Thread):
+	def run(self):
+		global distance
+		if distance == True:
+			print "TRIGGERED"
+			distance_label = self.ids["distance_label"]
+			distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
 
 class InitScreen(Screen):
 	def power_off(self, *args):
@@ -55,7 +65,18 @@ class InitScreen(Screen):
 		onoff_value = onoffswitch.active
 		if onoff_value == False:
 			subprocess.call(powerdown)
-		
+	
+	def distance_on(self, *args):
+		print "distance_on was triggered"
+		distance_label = self.ids["distance_label"]
+		distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
+		print distance_label.text	
+	
+#	while True:
+#		if distance == True:
+#			distance_label = self.ids["distance_label"]
+#			distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
+				
 class MainScreen(Screen):
 	angle = 0	
 	def change_value(self, *args):
@@ -84,4 +105,7 @@ if __name__ == "__main__":
 	checker = Communication()
 	checker.daemon = True
 	checker.start()
+#	distance_checker = DistanceStepperChecker()
+#	distance_checker.daemon = True
+#	distance_checker.start()	
 	LidarApp().run()
