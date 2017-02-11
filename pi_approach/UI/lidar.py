@@ -43,21 +43,21 @@ class Communication(threading.Thread):
 		print data_back
 		if data_back == "DISTANCE!":
 			# set distance to OK
-			print "Distance is OK"
-			InitScreen.distance_on()
+			print application.current_screen
+			application.current_screen.distance_on()
 			global distance
 			distance = True
 		if data_back == "STEPPER!":
 			# set stepper to OK
 			print "Stepper is OK"
 
-class DistanceStepperChecker(threading.Thread):
-	def run(self):
-		global distance
-		if distance == True:
-			print "TRIGGERED"
-			distance_label = self.ids["distance_label"]
-			distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
+#class DistanceStepperChecker(threading.Thread):
+#	def run(self):
+#		global distance
+#		if distance == True:
+#			print "TRIGGERED"
+#			distance_label = self.ids["distance_label"]
+#			distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
 
 class InitScreen(Screen):
 	def power_off(self, *args):
