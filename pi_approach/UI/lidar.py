@@ -15,7 +15,6 @@ import serverxclient as serv
 
 powerdown = ["sudo", "shutdown", "now"]
 
-global distance
 distance = False
 stepper = False
 
@@ -24,7 +23,7 @@ class Communication(threading.Thread):
 
 	def run(self):
 		self.setup()
-		while distance == False:
+		while (distance == False) and (stepper == False):
 			(connection, address) = self.awaiting_socket()
 			self.test_socket(connection)
 
@@ -43,21 +42,14 @@ class Communication(threading.Thread):
 		print data_back
 		if data_back == "DISTANCE!":
 			# set distance to OK
-			print application.current_screen
 			application.current_screen.distance_on()
 			global distance
 			distance = True
 		if data_back == "STEPPER!":
 			# set stepper to OK
-			print "Stepper is OK"
-
-#class DistanceStepperChecker(threading.Thread):
-#	def run(self):
-#		global distance
-#		if distance == True:
-#			print "TRIGGERED"
-#			distance_label = self.ids["distance_label"]
-#			distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
+			application.current_screen.stepper_on()
+			global stepper
+			stepper = True
 
 class InitScreen(Screen):
 	def power_off(self, *args):
@@ -70,12 +62,11 @@ class InitScreen(Screen):
 		print "distance_on was triggered"
 		distance_label = self.ids["distance_label"]
 		distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
-		print distance_label.text	
 	
-#	while True:
-#		if distance == True:
-#			distance_label = self.ids["distance_label"]
-#			distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
+	def stepper_on(self, *args):
+		print "stepper_on was triggered"
+		stepper_label = self.ids["stepper_label"]
+		stepper_label.text = "[size=40]Stepper:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
 				
 class MainScreen(Screen):
 	angle = 0	
@@ -105,7 +96,4 @@ if __name__ == "__main__":
 	checker = Communication()
 	checker.daemon = True
 	checker.start()
-#	distance_checker = DistanceStepperChecker()
-#	distance_checker.daemon = True
-#	distance_checker.start()	
 	LidarApp().run()

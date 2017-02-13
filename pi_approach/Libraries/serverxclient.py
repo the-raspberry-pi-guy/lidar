@@ -45,3 +45,6 @@ class Client(object):
 
 	def send_data(self, data):
 		Client.s.send(data)
+
+	def close_connection(self)
+		Client.s.close()
