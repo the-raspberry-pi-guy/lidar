@@ -13,8 +13,19 @@ def get_distance():
 	distance = arduino_dist.readline()
 	return distance
 
-client = cli.Client()
-client.socket_connection()
-while True:
-	client.send_data("Hello! Yo!")
-	time.sleep(1)
+def main():
+	client = cli.Client()
+	connected = False
+	while not connected:
+		try:
+			client.socket_connection()
+			connected = True
+		except:
+			print "Failure"
+			time.sleep(2)
+	
+	hand_shake = "DISTANCE!"
+	client.send_data(hand_shake)
+	client.close_connection()
+
+main()
