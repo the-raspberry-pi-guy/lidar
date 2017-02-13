@@ -5,11 +5,11 @@
 import time
 import sys
 sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
-import radio_library
 import PicoBorgRev
+import serverxclient as cli
 
 motor = PicoBorgRev.PicoBorgRev()
-r = radio_library.radio_comms()
+client = cli.Client()
 
 class stepper_controller(object):
 	""" An all-powerful stepper motor controller"""
@@ -24,6 +24,22 @@ class stepper_controller(object):
 	def __init__(self):
 		motor.Init()
 		motor.ResetEpo()		
+
+	def setup_handshake(self):
+		connected = False
+		while not connected:
+			try:
+				client.socket_connection()
+				connected = True
+			except:
+				print "Failure"
+				time.sleep(2)
+		received_communication = client.receive_data()
+		if received_communication == "VERIFY?":
+			hand_shake = "STEPPER!"
+			client.send_data(hand_shake)
+		else:
+			print "Unidentified communication"
 
 	def move_steps_txrx(self,count):
 		# data_list = []
@@ -63,7 +79,7 @@ class stepper_controller(object):
 			degrees = str(self.progress*1.8)
 			for i in range(0, len(degrees)):
 				data_list.append(degrees[i])
-			r.send_data(data_list)
+#			r.send_data(data_list)
 
 			time.sleep(stepper_controller.step_delay)
         		count -= 1
@@ -71,8 +87,9 @@ class stepper_controller(object):
 		motor.MotorsOff()
 	
 	def main(self):
+		self.setup_handshake()
 		steps = input("How many steps would you like to rotate? ")
-		stepper_controller.move_steps_txrx(self, steps)
+		self.move_steps_txrx(steps)
 		
 #		while True:
 #			if # receive #
