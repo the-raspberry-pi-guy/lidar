@@ -13,7 +13,7 @@ def get_distance():
 	distance = arduino_dist.readline()
 	return distance
 
-def main():
+def setup_handshake():
 	client = cli.Client()
 	connected = False
 	while not connected:
@@ -26,6 +26,5 @@ def main():
 	
 	hand_shake = "DISTANCE!"
 	client.send_data(hand_shake)
-	client.close_connection()
 
-main()
+setup_handshake()
