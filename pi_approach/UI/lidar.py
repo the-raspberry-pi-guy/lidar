@@ -9,7 +9,7 @@ from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
+from kivy.uix.screenmanager import ScreenManager, Screen
 sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
 import serverxclient as serv
 
@@ -23,9 +23,15 @@ class Communication(threading.Thread):
 
 	def run(self):
 		self.setup()
-		while (distance == False) and (stepper == False):
+		while (distance == False) or (stepper == False):
+			print distance
+			print stepper
 			(connection, address) = self.awaiting_socket()
+			print (connection, address)
 			self.test_socket(connection)
+			print "HERE"
+		time.sleep(2)
+		application.current = "main"
 
 	def setup(self):
 		Communication.server.setup_server()
@@ -50,6 +56,7 @@ class Communication(threading.Thread):
 			application.current_screen.stepper_on()
 			global stepper
 			stepper = True
+		print "Finished testing socket"
 
 class InitScreen(Screen):
 	def power_off(self, *args):

@@ -1,18 +1,16 @@
 #:kivy 1.9.2
 
-#: import FadeTransition kivy.uix.screenmanager.FadeTransition
-
 #:set bar_height_width 100
 #:set black [0,0,0,1]
 #:set yheight 480
 #:set xwidth 800
 
 ScreenManagement:
-	transition: FadeTransition()
 	InitScreen:
 	MainScreen:	
 
 <InitScreen>:
+	name:"initial"
 	GridLayout:
 		canvas.before:
 			Rectangle:
@@ -73,6 +71,7 @@ ScreenManagement:
 				color:black
 
 <MainScreen>:
+	name:"main"
 	GridLayout:
 		canvas.before:
 			Rectangle:
