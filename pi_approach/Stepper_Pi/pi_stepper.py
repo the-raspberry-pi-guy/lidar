@@ -88,8 +88,9 @@ class stepper_controller(object):
 	
 	def main(self):
 		self.setup_handshake()
-		steps = input("How many steps would you like to rotate? ")
-		self.move_steps_txrx(steps)
+		while True:
+			steps = input("How many steps would you like to rotate? ")
+			self.move_steps_txrx(steps)
 		
 #		while True:
 #			if # receive #
@@ -104,5 +105,4 @@ class stepper_controller(object):
 #							cont = false
 
 stepp = stepper_controller()
-while True:
-	stepp.main()
+stepp.main()
