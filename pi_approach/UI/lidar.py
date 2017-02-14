@@ -15,17 +15,17 @@ import serverxclient as serv
 
 powerdown = ["sudo", "shutdown", "now"]
 
+server = serv.Server()
+
 distance = False
 stepper = False
+distance_connection = 0
+stepper_connection = 0
 
 class Communication(threading.Thread):
-	server = serv.Server()
-
 	def run(self):
 		self.setup()
 		while (distance == False) or (stepper == False):
-			print distance
-			print stepper
 			(connection, address) = self.awaiting_socket()
 			print (connection, address)
 			self.test_socket(connection)
@@ -34,28 +34,30 @@ class Communication(threading.Thread):
 		application.current = "main"
 
 	def setup(self):
-		Communication.server.setup_server()
+		server.setup_server()
 		print "SUCCESS ON BIND"
 	
 	def awaiting_socket(self):
 		print "AWAITING"
-		(connection, address) = Communication.server.socket_reception()
+		(connection, address) = server.socket_reception()
 		return (connection, address)
 
 	def test_socket(self, connection):
-		Communication.server.send_data(connection,"VERIFY?")
-		data_back = Communication.server.receive_data(connection)
+		server.send_data(connection,"VERIFY?")
+		data_back = server.receive_data(connection)
 		print data_back
 		if data_back == "DISTANCE!":
 			# set distance to OK
 			application.current_screen.distance_on()
-			global distance
+			global distance, distance_connection
 			distance = True
+			distance_connection = connection
 		if data_back == "STEPPER!":
 			# set stepper to OK
 			application.current_screen.stepper_on()
-			global stepper
+			global stepper, stepper_connection
 			stepper = True
+			stepper_connection = connection
 		print "Finished testing socket"
 
 class InitScreen(Screen):
@@ -77,6 +79,8 @@ class InitScreen(Screen):
 				
 class MainScreen(Screen):
 	angle = 0	
+	distances = []
+	positions = []
 	def change_value(self, *args):
 		value_slider = self.ids["value_slider"]
 		self.angle = int(value_slider.value)
@@ -86,8 +90,25 @@ class MainScreen(Screen):
 		value_label.text = "[size=10]" + str(self.angle) + "[/size]"
 	
 	def scan(self, *args):
-		# Remember to add "if lidar/camera are on" 
-		print self.angle
+		# Remember to add "if lidar/camera are on"
+		print "Now contacting and getting data"
+		while self.angle > 0:
+			server.send_data(distance_connection, "FIRE")
+			distance_response = server.receive_data(distance_connection)
+
+			server.send_data(stepper_connection, "REPORT-ROTATE")
+			stepper_position = server.receive_data(stepper_connection)
+
+			point_distance = float(distance_response[:-2])
+			point_position = float(stepper_position)
+
+			self.distances.append(point_distance)
+			self.positions.append(point_position)
+
+			self.angle -= 1.8
+
+		print self.distances
+		print self.positions
 		# Scan through this angle
 
 class ScreenManagement(ScreenManager):
