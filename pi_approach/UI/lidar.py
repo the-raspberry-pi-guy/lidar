@@ -96,6 +96,7 @@ class MainScreen(Screen):
 		print "Now contacting and getting data"
 		self.distances = []
 		self.positions = []
+		angle_copy = self.angle
 		while self.angle > 0:
 			server.send_data(distance_connection, "FIRE")
 			distance_response = server.receive_data(distance_connection)
@@ -111,9 +112,12 @@ class MainScreen(Screen):
 
 			self.angle -= 1.8
 
+		self.angle = angle_copy
 		print self.distances
 		print self.positions
 		self.draw_map(self.distances, self.positions)
+		output_image = self.ids["output_image"]
+		output_image.source = "output.png"
 
 	def draw_map(self, distance_array, angle_array):
 		dimensions = (700,380)
