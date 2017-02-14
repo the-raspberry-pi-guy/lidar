@@ -1,6 +1,7 @@
 # Touchscreen Kivy Interface for Lidar Project
 
 import socket
+import math
 import time
 import sys
 import subprocess
@@ -10,6 +11,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+from PIL import Image, ImageDraw
 sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
 import serverxclient as serv
 
@@ -84,14 +86,16 @@ class MainScreen(Screen):
 	def change_value(self, *args):
 		value_slider = self.ids["value_slider"]
 		self.angle = int(value_slider.value)
-		if self.angle == 361:
-			self.angle = "CONT" 
+#		if self.angle == 361:
+#			self.angle = "CONT" 
 		value_label = self.ids['value_label']
 		value_label.text = "[size=10]" + str(self.angle) + "[/size]"
 	
 	def scan(self, *args):
 		# Remember to add "if lidar/camera are on"
 		print "Now contacting and getting data"
+		self.distances = []
+		self.positions = []
 		while self.angle > 0:
 			server.send_data(distance_connection, "FIRE")
 			distance_response = server.receive_data(distance_connection)
@@ -109,7 +113,34 @@ class MainScreen(Screen):
 
 		print self.distances
 		print self.positions
-		# Scan through this angle
+		self.draw_map(self.distances, self.positions)
+
+	def draw_map(self, distance_array, angle_array):
+		dimensions = (700,380)
+		centre_x = dimensions[0]/2
+		centre_y = dimensions[1]/2
+		points = len(distance_array)
+		map = Image.new("1", dimensions, color=0)
+
+		draw = ImageDraw.Draw(map)
+		for i in range(0, points):
+			length_y = math.sin(math.radians(angle_array[i]))*distance_array[i]
+			length_x = math.cos(math.radians(angle_array[i]))*distance_array[i]
+			if (angle_array[i] > 90) and (angle_array[i] < 180):
+				length_y = -length_y
+			if (angle_array[i] > 180) and (angle_array[i] < 270):
+				length_x = -length_x
+			if (angle_array[i] >270) and (angle_array[i] < 360):
+				length_y = -length_y
+				length_x = -length_x
+								
+			coord_x = centre_x + length_x
+			coord_y = centre_y + length_y
+			coords = (coord_x, coord_y)
+
+			draw.point(coords,1)
+
+		map.save("output.png", "PNG")
 
 class ScreenManagement(ScreenManager):
 	pass
