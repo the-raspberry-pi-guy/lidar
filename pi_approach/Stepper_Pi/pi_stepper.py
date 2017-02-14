@@ -20,6 +20,7 @@ class stepper_controller(object):
 	step_delay = 0.002                                               # Delay between steps
 	
 	progress = 0
+	degrees = 0
 
 	def __init__(self):
 		motor.Init()
@@ -41,7 +42,7 @@ class stepper_controller(object):
 		else:
 			print "Unidentified communication"
 
-	def move_steps_txrx(self,count):
+	def move_steps(self,count):
 		# data_list = []
 		# Reverse handling
 		if count < 0:
@@ -76,21 +77,28 @@ class stepper_controller(object):
 			self.progress += 1
 			if self.progress > 200:
 				self.progress -= 200
-			degrees = str(self.progress*1.8)
-			for i in range(0, len(degrees)):
-				data_list.append(degrees[i])
-#			r.send_data(data_list)
-
+			self.degrees = str(self.progress*1.8)
 			time.sleep(stepper_controller.step_delay)
         		count -= 1
 		
 		motor.MotorsOff()
+
+	def active_listen(self):
+		received_communication = client.receive_data()
+		if received_communication == "REPORT-ROTATE":
+			result = self.degrees
+			client.send_data(str(result))
+			self.move_steps(1)
+		else:
+			print "ERROR"
+			#degrees = float(received_communication)
+			#steps = degrees/1.8
+			#self.move_steps(steps)
 	
 	def main(self):
 		self.setup_handshake()
 		while True:
-			steps = input("How many steps would you like to rotate? ")
-			self.move_steps_txrx(steps)
+			self.active_listen()
 		
 #		while True:
 #			if # receive #
