@@ -33,8 +33,17 @@ class distance_controller(object):
 		else:
 			print "Unidentified communication"
 
+	def active_listen(self):
+		received_communication = client.receive_data()
+		if received_communication == "FIRE":
+			result = self.get_distance()
+			print result
+			client.send_data(result)
+
 	def main(self):
 		self.setup_handshake()
+		while True:
+			self.active_listen()
 
 distance = distance_controller()
 distance.main()
