@@ -133,13 +133,14 @@ class MainScreen(Screen):
 			print "Nothing enabled"
 
 	def draw_map(self, distance_array, angle_array):
+		end_dimensions = (700,380)
 		points = len(distance_array)-1
 		highest_val = 0
 		for i in range(0,points):
                 	if distance_array[i] > highest_val:
 				highest_val = distance_array[i]
 		
-		dimensions = (highest_val,highest_val)
+		dimensions = (int(highest_val)+(2*end_dimensions[0]),int(highest_val)+(2*end_dimensions[1]))
 		centre_x = dimensions[0]/2
 		centre_y = dimensions[1]/2
 		map = Image.new("RGBA", dimensions)
@@ -192,7 +193,7 @@ class MainScreen(Screen):
 
 		draw.line(line,(1,1,1), pen_size)
 
-		map = map.resize((700,380), Image.ANTIALIAS)
+		map = map.resize(end_dimensions, Image.ANTIALIAS)
 		path = "/home/pi/lidar/pi_approach/UI/scans/" + str(random.randint(0,1000)) + ".png"
 		print path
 		map.save(path, "PNG")
