@@ -6,6 +6,7 @@ import time
 import sys
 import subprocess
 import threading
+import random
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
@@ -115,9 +116,9 @@ class MainScreen(Screen):
 		self.angle = angle_copy
 		print self.distances
 		print self.positions
-		self.draw_map(self.distances, self.positions)
+		source = self.draw_map(self.distances, self.positions)
 		output_image = self.ids["output_image"]
-		output_image.source = "output.png"
+		output_image.source = source
 
 	def draw_map(self, distance_array, angle_array):
 		dimensions = (700,380)
@@ -125,6 +126,7 @@ class MainScreen(Screen):
 		centre_y = dimensions[1]/2
 		points = len(distance_array)
 		map = Image.new("1", dimensions, color=0)
+		line = []
 
 		draw = ImageDraw.Draw(map)
 		for i in range(0, points):
@@ -142,9 +144,16 @@ class MainScreen(Screen):
 			coord_y = centre_y + length_y
 			coords = (coord_x, coord_y)
 
-			draw.point(coords,1)
+			#draw.point(coords,1) # Draws a point cloud
+			line.append(coords)
 
-		map.save("output.png", "PNG")
+		draw.line(line,1,5)
+
+		path = "/home/pi/lidar/pi_approach/UI/scans/" + str(random.randint(0,1000)) + ".png"
+		print path
+		map.save(path, "PNG")
+		return path
+		
 
 class ScreenManagement(ScreenManager):
 	pass
