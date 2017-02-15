@@ -43,6 +43,8 @@ class distance_controller(object):
 				client.send_data(result)
 			except:
 				print "Unexpected character"
+				client.send_data("0")
+
 
 	def main(self):
 		self.setup_handshake()
