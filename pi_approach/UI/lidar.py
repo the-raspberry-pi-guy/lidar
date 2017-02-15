@@ -133,11 +133,16 @@ class MainScreen(Screen):
 			print "Nothing enabled"
 
 	def draw_map(self, distance_array, angle_array):
-		dimensions = (700,380)
+		points = len(distance_array)-1
+		highest_val = 0
+		for i in range(0,points):
+                	if distance_array[i] > highest_val:
+				highest_val = distance_array[i]
+		
+		dimensions = (highest_val,highest_val)
 		centre_x = dimensions[0]/2
 		centre_y = dimensions[1]/2
-		points = len(distance_array)-1
-		map = Image.new("1", dimensions, color=0)
+		map = Image.new("RGBA", dimensions)
 		line = []
 
 		draw = ImageDraw.Draw(map)
@@ -148,8 +153,6 @@ class MainScreen(Screen):
 			cosi = math.cos(math.radians(angle_array[i]))
 			if sine == 0:
 				sine = 1
-#			if cosi == 1:
-#				cosi = 0
 			length_y = sine*distance_array[i]
 			length_x = cosi*distance_array[i]
 
@@ -180,11 +183,16 @@ class MainScreen(Screen):
 
 			coords = (coord_x, coord_y)
 			print coords
-#			draw.point(coords,1) # Draws a point cloud
 			line.append(coords)
 
-		draw.polygon(line,None,1)
+		if highest_val > 1000:
+			pen_size = 10
+		else:
+			pen_size = 5
 
+		draw.line(line,(1,1,1), pen_size)
+
+		map = map.resize((700,380), Image.ANTIALIAS)
 		path = "/home/pi/lidar/pi_approach/UI/scans/" + str(random.randint(0,1000)) + ".png"
 		print path
 		map.save(path, "PNG")
