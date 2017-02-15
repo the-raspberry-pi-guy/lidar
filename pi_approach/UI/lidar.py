@@ -86,7 +86,7 @@ class MainScreen(Screen):
 	def power_off(self, *args):
 		onoffswitch = self.ids["onoffswitch2"]
 		onoff_value = onoffswitch.active
-		if onoff_vale == False:
+		if onoff_value == False:
 			server.send_data(distance_connection, "POWER-OFF")
 			server.send_data(stepper_connection, "POWER-OFF")
 			subprocess.call(powerdown)
