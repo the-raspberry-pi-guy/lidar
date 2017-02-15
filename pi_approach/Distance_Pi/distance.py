@@ -37,8 +37,12 @@ class distance_controller(object):
 		received_communication = client.receive_data()
 		if received_communication == "FIRE":
 			result = self.get_distance()
-			print result
-			client.send_data(result)
+			try:
+				test_int = int(result)
+				print result
+				client.send_data(result)
+			except:
+				print "Unexpected character"
 
 	def main(self):
 		self.setup_handshake()
