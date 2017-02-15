@@ -7,6 +7,8 @@ import sys
 sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
 import serverxclient as cli
 
+powerdown = ["sudo", "shutdown", "now"]
+
 arduino_dist = serial.Serial('/dev/ttyUSB0',9600)
 client = cli.Client()
 
@@ -44,7 +46,8 @@ class distance_controller(object):
 			except:
 				print "Unexpected character"
 				client.send_data("0")
-
+		if received_communication == "POWER-OFF":
+			subprocess.call(powerdown)
 
 	def main(self):
 		self.setup_handshake()
