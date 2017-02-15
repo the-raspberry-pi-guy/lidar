@@ -142,12 +142,14 @@ class MainScreen(Screen):
 
 		draw = ImageDraw.Draw(map)
 		for i in range(0, points):
+			if angle_array[i] == 0:
+				angle_array[i] = 0.01
 			sine = math.sin(math.radians(angle_array[i]))
 			cosi = math.cos(math.radians(angle_array[i]))
 			if sine == 0:
 				sine = 1
-			if cosi == 0:
-				cosi = 1
+#			if cosi == 1:
+#				cosi = 0
 			length_y = sine*distance_array[i]
 			length_x = cosi*distance_array[i]
 
@@ -177,11 +179,11 @@ class MainScreen(Screen):
 				coord_y = 0
 
 			coords = (coord_x, coord_y)
-
+			print coords
 #			draw.point(coords,1) # Draws a point cloud
 			line.append(coords)
 
-		draw.line(line,1,3)
+		draw.polygon(line,None,1)
 
 		path = "/home/pi/lidar/pi_approach/UI/scans/" + str(random.randint(0,1000)) + ".png"
 		print path
