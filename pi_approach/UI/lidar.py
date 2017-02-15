@@ -24,6 +24,7 @@ distance = False
 stepper = False
 distance_connection = 0
 stepper_connection = 0
+accuracy_limit = 5000
 
 class Communication(threading.Thread):
 	def run(self):
@@ -87,67 +88,100 @@ class MainScreen(Screen):
 	def change_value(self, *args):
 		value_slider = self.ids["value_slider"]
 		self.angle = int(value_slider.value)
-#		if self.angle == 361:
-#			self.angle = "CONT" 
-		value_label = self.ids['value_label']
+		value_label = self.ids["value_label"]
 		value_label.text = "[size=10]" + str(self.angle) + "[/size]"
 	
 	def scan(self, *args):
 		# Remember to add "if lidar/camera are on"
-		print "Now contacting and getting data"
-		self.distances = []
-		self.positions = []
-		angle_copy = self.angle
-		while self.angle > 0:
-			server.send_data(distance_connection, "FIRE")
-			distance_response = server.receive_data(distance_connection)
+		enable_lidar = self.ids["enable_lidar"]
+		if enable_lidar.state == "down":
+			print "Now contacting and getting data"
+			self.distances = []
+			self.positions = []
+			angle_copy = self.angle
 
-			server.send_data(stepper_connection, "REPORT-ROTATE")
-			stepper_position = server.receive_data(stepper_connection)
+			for i in range(0,9):
+				server.send_data(distance_connection, "FIRE")
+				discarded_response = server.receive_data(distance_connection)
+				time.sleep(0.05)
 
-			point_distance = float(distance_response[:-2])
-			point_position = float(stepper_position)
+			while self.angle+1.8 > 0:
+				server.send_data(distance_connection, "FIRE")
+				distance_response = server.receive_data(distance_connection)
+				while float(distance_response[:-2]) > accuracy_limit:
+					server.send_data(distance_connection, "FIRE")
+					distance_response = server.receive_data(distance_connection)
 
-			self.distances.append(point_distance)
-			self.positions.append(point_position)
+				server.send_data(stepper_connection, "REPORT-ROTATE")
+				stepper_position = server.receive_data(stepper_connection)
+	
+				point_distance = float(distance_response[:-2])
+				point_position = float(stepper_position)
 
-			self.angle -= 1.8
+				self.distances.append(point_distance)
+				self.positions.append(point_position)
 
-		self.angle = angle_copy
-		print self.distances
-		print self.positions
-		source = self.draw_map(self.distances, self.positions)
-		output_image = self.ids["output_image"]
-		output_image.source = source
+				self.angle -= 1.8
+
+			self.angle = angle_copy
+			print self.distances
+			print self.positions
+			source = self.draw_map(self.distances, self.positions)
+			output_image = self.ids["output_image"]
+			output_image.source = source
+		else:
+			print "Nothing enabled"
 
 	def draw_map(self, distance_array, angle_array):
 		dimensions = (700,380)
 		centre_x = dimensions[0]/2
 		centre_y = dimensions[1]/2
-		points = len(distance_array)
+		points = len(distance_array)-1
 		map = Image.new("1", dimensions, color=0)
 		line = []
 
 		draw = ImageDraw.Draw(map)
 		for i in range(0, points):
-			length_y = math.sin(math.radians(angle_array[i]))*distance_array[i]
-			length_x = math.cos(math.radians(angle_array[i]))*distance_array[i]
-			if (angle_array[i] > 90) and (angle_array[i] < 180):
-				length_y = -length_y
-			if (angle_array[i] > 180) and (angle_array[i] < 270):
-				length_x = -length_x
-			if (angle_array[i] >270) and (angle_array[i] < 360):
-				length_y = -length_y
-				length_x = -length_x
+			sine = math.sin(math.radians(angle_array[i]))
+			cosi = math.cos(math.radians(angle_array[i]))
+			if sine == 0:
+				sine = 1
+			if cosi == 0:
+				cosi = 1
+			length_y = sine*distance_array[i]
+			length_x = cosi*distance_array[i]
+
+#			if (angle_array[i] < 90) and (angle_array[i] > 0):
+#				length_y = -length_y
+#				length_x = -length_x
+#			if (angle_array[i] > 90) and (angle_array[i] < 180):
+#				length_y = -length_y
+#				length_x = length_x
+#			if (angle_array[i] > 180) and (angle_array[i] < 270):
+#				length_y = length_y
+#				length_x = -length_x
+#			if (angle_array[i] >270) and (angle_array[i] < 360):
+#				length_y = length_y
+#				length_x = length_x
 								
 			coord_x = centre_x + length_x
+			if coord_x > dimensions[0]:
+				coord_x = dimensions[0]
+			if coord_x < 0:
+				coord_x = 0
+
 			coord_y = centre_y + length_y
+			if coord_y > dimensions[1]:
+				coord_y = dimensions[1]
+			if coord_y < 0:
+				coord_y = 0
+
 			coords = (coord_x, coord_y)
 
-			#draw.point(coords,1) # Draws a point cloud
+#			draw.point(coords,1) # Draws a point cloud
 			line.append(coords)
 
-		draw.line(line,1,5)
+		draw.line(line,1,3)
 
 		path = "/home/pi/lidar/pi_approach/UI/scans/" + str(random.randint(0,1000)) + ".png"
 		print path
