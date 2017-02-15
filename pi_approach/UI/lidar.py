@@ -33,7 +33,6 @@ class Communication(threading.Thread):
 			(connection, address) = self.awaiting_socket()
 			print (connection, address)
 			self.test_socket(connection)
-			print "HERE"
 		time.sleep(2)
 		application.current = "main"
 
@@ -72,12 +71,10 @@ class InitScreen(Screen):
 			subprocess.call(powerdown)
 	
 	def distance_on(self, *args):
-		print "distance_on was triggered"
 		distance_label = self.ids["distance_label"]
 		distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
 	
 	def stepper_on(self, *args):
-		print "stepper_on was triggered"
 		stepper_label = self.ids["stepper_label"]
 		stepper_label.text = "[size=40]Stepper:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
 				
@@ -85,6 +82,15 @@ class MainScreen(Screen):
 	angle = 0	
 	distances = []
 	positions = []
+
+	def power_off(self, *args):
+		onoffswitch = self.ids["onoffswitch2"]
+		onoff_value = onoffswitch.active
+		if onoff_vale == False:
+			server.send_data(distance_connection, "POWER-OFF")
+			server.send_data(stepper_connection, "POWER-OFF")
+			subprocess.call(powerdown)
+
 	def change_value(self, *args):
 		value_slider = self.ids["value_slider"]
 		self.angle = int(value_slider.value)
@@ -108,15 +114,20 @@ class MainScreen(Screen):
 			while self.angle+1.8 > 0:
 				server.send_data(distance_connection, "FIRE")
 				distance_response = server.receive_data(distance_connection)
-				while float(distance_response[:-2]) > accuracy_limit:
+				tries = 0
+				while (float(distance_response[:-2]) > accuracy_limit) and (tries < 3):
 					server.send_data(distance_connection, "FIRE")
 					distance_response = server.receive_data(distance_connection)
+					tries += 1
 
 				server.send_data(stepper_connection, "REPORT-ROTATE")
 				stepper_position = server.receive_data(stepper_connection)
 	
 				point_distance = float(distance_response[:-2])
 				point_position = float(stepper_position)
+
+				if point_distance > accuracy_limit:
+					point_distance = 0
 
 				self.distances.append(point_distance)
 				self.positions.append(point_position)
@@ -157,18 +168,6 @@ class MainScreen(Screen):
 			length_y = sine*distance_array[i]
 			length_x = cosi*distance_array[i]
 
-#			if (angle_array[i] < 90) and (angle_array[i] > 0):
-#				length_y = -length_y
-#				length_x = -length_x
-#			if (angle_array[i] > 90) and (angle_array[i] < 180):
-#				length_y = -length_y
-#				length_x = length_x
-#			if (angle_array[i] > 180) and (angle_array[i] < 270):
-#				length_y = length_y
-#				length_x = -length_x
-#			if (angle_array[i] >270) and (angle_array[i] < 360):
-#				length_y = length_y
-#				length_x = length_x
 								
 			coord_x = centre_x + length_x
 			if coord_x > dimensions[0]:

@@ -131,10 +131,16 @@ ScreenManagement:
 				id: enable_lidar
 				markup:True
 				text:"[size=18]Enable\nLidar\nModule[/size]"
-			ToggleButton:
-				id: enable_camera
-				markup:True
-				text:"[size=18]Enable\nCamera\nModule[/size]"
+			Switch:
+				id: onoffswitch2
+				active: True
+				on_active: root.power_off()
+				size_hint_x:None
+				width:bar_height_width
+#			ToggleButton:
+#				id: enable_camera
+#				markup:True
+#				text:"[size=18]Enable\nCamera\nModule[/size]"
 		Scatter:
 			size_hint_x:None
 			size_hint_y:None
