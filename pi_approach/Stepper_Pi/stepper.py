@@ -8,6 +8,8 @@ sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
 import PicoBorgRev
 import serverxclient as cli
 
+powerdown = ["sudo", "shutdown", "now"]
+
 motor = PicoBorgRev.PicoBorgRev()
 client = cli.Client()
 
@@ -89,28 +91,15 @@ class stepper_controller(object):
 			result = self.degrees
 			client.send_data(str(result))
 			self.move_steps(1)
+		if received_communication == "POWER-OFF":
+			subprocess.call(powerdown)
 		else:
 			print "ERROR"
-			#degrees = float(received_communication)
-			#steps = degrees/1.8
-			#self.move_steps(steps)
 	
 	def main(self):
 		self.setup_handshake()
 		while True:
 			self.active_listen()
 		
-#		while True:
-#			if # receive #
-#				if # single rotation #
-#					steps = 200
-#					stepper_controller.move_steps_transceive(self, steps)
-#				if # cont rotation #
-#					cont = true
-#					while cont = true:
-#						stepper_controller.move_steps_transceive(self, 1)
-#						if # stop command #
-#							cont = false
-
 stepp = stepper_controller()
 stepp.main()
