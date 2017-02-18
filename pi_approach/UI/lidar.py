@@ -80,8 +80,6 @@ class InitScreen(Screen):
 				
 class MainScreen(Screen):
 	angle = 0	
-	distances = []
-	positions = []
 
 	def power_off(self, *args):
 		onoffswitch = self.ids["onoffswitch2"]
@@ -102,8 +100,8 @@ class MainScreen(Screen):
 		enable_lidar = self.ids["enable_lidar"]
 		if enable_lidar.state == "down":
 			print "Now contacting and getting data"
-			self.distances = []
-			self.positions = []
+			distances = []
+			positions = []
 			angle_copy = self.angle
 
 			for i in range(0,9):
@@ -126,73 +124,87 @@ class MainScreen(Screen):
 				point_distance = float(distance_response[:-2])
 				point_position = float(stepper_position)
 
-				if point_distance > accuracy_limit:
-					point_distance = 0
+				print (point_position, point_distance)
 
-				self.distances.append(point_distance)
-				self.positions.append(point_position)
+				if point_distance <= accuracy_limit:
+					distances.append(point_distance)
+					positions.append(point_position)
 
 				self.angle -= 1.8
 
 			self.angle = angle_copy
-			print self.distances
-			print self.positions
-			source = self.draw_map(self.distances, self.positions)
+			distances = []
+			positions = []
+			for i in range(0,199):
+				positions.append(i*1.8)
+			for i in range (0,199):
+				distances.append(200)
+			print distances
+			print positions
+			source = self.draw_map(distances, positions)
 			output_image = self.ids["output_image"]
 			output_image.source = source
 		else:
 			print "Nothing enabled"
 
 	def draw_map(self, distance_array, angle_array):
-		end_dimensions = (700,380)
+		dimensions = (700,380)
 		points = len(distance_array)-1
-		highest_val = 0
-		for i in range(0,points):
-                	if distance_array[i] > highest_val:
-				highest_val = distance_array[i]
-		
-		dimensions = (int(highest_val)+(2*end_dimensions[0]),int(highest_val)+(2*end_dimensions[1]))
+
 		centre_x = dimensions[0]/2
 		centre_y = dimensions[1]/2
+		print centre_x
+		print centre_y
+		scaler = 4
 		map = Image.new("RGBA", dimensions)
-		line = []
 
 		draw = ImageDraw.Draw(map)
+		draw.point((centre_x, centre_y), (0,0,0))
 		for i in range(0, points):
-			if angle_array[i] == 0:
-				angle_array[i] = 0.01
-			sine = math.sin(math.radians(angle_array[i]))
-			cosi = math.cos(math.radians(angle_array[i]))
-			if sine == 0:
-				sine = 1
-			length_y = sine*distance_array[i]
-			length_x = cosi*distance_array[i]
+			if angle_array[i] == 360:
+				angle_array[i] = 0.0
 
-								
+			if angle_array[i] == 0.0:
+				length_x = -distance_array[i]
+				length_y = 0
+			elif angle_array[i] == 90.0:
+				length_x = 0
+				length_y = distance_array[i]
+			elif angle_array[i] == 180.0:
+				length_x = distance_array[i]
+				length_y = 0
+			elif angle_array[i] == 270.0:
+				length_x = 0
+				length_y = -distance_array[i]
+			else:
+				sine_distance = (math.sin(math.radians(angle_array[i]))*(distance_array[i]))
+				cosi_distance = (math.cos(math.radians(angle_array[i]))*(distance_array[i]))
+
+				if (angle_array[i] > 0) and (angle_array[i] < 90):
+					length_x = cosi_distance
+					length_y = +sine_distance
+				elif (angle_array[i] > 90) and (angle_array[i] < 180):
+					length_x = +cosi_distance
+					length_y = +sine_distance
+				elif (angle_array[i] > 180) and (angle_array[i] < 270):
+					length_x = +cosi_distance
+					length_y = sine_distance
+				elif (angle_array[i] > 270) and (angle_array[i] < 360):
+					length_x = cosi_distance
+					length_y = sine_distance
+				else:
+					print "ERROR"
+			
+			length_x = length_x/scaler
+			length_y = length_y/scaler			
+		
 			coord_x = centre_x + length_x
-			if coord_x > dimensions[0]:
-				coord_x = dimensions[0]
-			if coord_x < 0:
-				coord_x = 0
-
 			coord_y = centre_y + length_y
-			if coord_y > dimensions[1]:
-				coord_y = dimensions[1]
-			if coord_y < 0:
-				coord_y = 0
 
 			coords = (coord_x, coord_y)
 			print coords
-			line.append(coords)
+			draw.point(coords, (1,1,1))
 
-		if highest_val > 1000:
-			pen_size = 10
-		else:
-			pen_size = 5
-
-		draw.line(line,(1,1,1), pen_size)
-
-		map = map.resize(end_dimensions, Image.ANTIALIAS)
 		path = "/home/pi/lidar/pi_approach/UI/scans/" + str(random.randint(0,1000)) + ".png"
 		print path
 		map.save(path, "PNG")
