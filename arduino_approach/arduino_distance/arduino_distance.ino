@@ -1,7 +1,6 @@
 /* arduino_distance
- * Uses VL53L0X Time-of-Flight Lidar sensor for distance measurement. Hand crafted averaging for greater precision
- * Stepper motor rotation. In progress.
- * Work in progress - Matthew Timmons-Brown
+ * Uses VL53L0X Time-of-Flight Lidar sensor for distance measurement. Hand crafted averaging for greater precision. Customisable degree of accuracy
+ * Author: Matthew Timmons-Brown
  */
 
 // Import I2C and sensor library
@@ -14,9 +13,10 @@
 // Initialise sensor
 VL53L0X sensor;
 
-// Setup loop
+// Setup loop (runs once at the start of the program)
 void setup()
 {
+  // Start serial communication with Pi
   Serial.begin(9600);
   Wire.begin();
   sensor.init();
@@ -24,6 +24,7 @@ void setup()
   sensor.setMeasurementTimingBudget(100000); // For higher accuracy measurement (up to 100ms)(value in microseconds)
 }
 
+// Main program loop (runs forever)
 void loop()
 {
   // Initiliase variables
@@ -31,10 +32,12 @@ void loop()
   int lidar_array[average_trials]; // Create array
   populate_lidar_array(lidar_array); // Pass array into populate_lidar_array function and fill with distance values
   avg = average_lidar_array(lidar_array); // Average array values and store in avg variable
-  Serial.print(avg);
+  Serial.print(avg); // Send the final value to the serial port, for the Pi to receive
   Serial.println();
 }
 
+// Populate lidar array function
+// Makes an array of distance values with length "average_trials"
 int populate_lidar_array(int lidar_array[])
 {
   for (int i = 0; i < average_trials; i = i +1)
@@ -44,6 +47,8 @@ int populate_lidar_array(int lidar_array[])
   }
 }
 
+// Average lidar array function
+// Averages an array of lidar values
 int average_lidar_array(int lidar_array[])
 {
   int sum = 0;
@@ -56,7 +61,9 @@ int average_lidar_array(int lidar_array[])
   result = ((float) sum) / average_trials;
   return result;
 }
-  
+
+// Get lidar distance function
+// Returns the distance from the lidar sensor
 int get_distance()
 {
   // Get distance in millimeters from lidar sensor
