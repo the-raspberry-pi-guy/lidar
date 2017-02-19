@@ -104,10 +104,10 @@ class MainScreen(Screen):
 			positions = []
 			angle_copy = self.angle
 
-			for i in range(0,9):
+			for i in range(0,20):
 				server.send_data(distance_connection, "FIRE")
 				discarded_response = server.receive_data(distance_connection)
-				time.sleep(0.05)
+				time.sleep(0.1)
 
 			while self.angle+1.8 > 0:
 				server.send_data(distance_connection, "FIRE")
@@ -149,33 +149,34 @@ class MainScreen(Screen):
 		centre_y = dimensions[1]/2
 		print centre_x
 		print centre_y
-		scaler = 4
+		scaler = (centre_x+accuracy_limit)/dimensions[0]
 		map = Image.new("RGBA", dimensions)
 
 		draw = ImageDraw.Draw(map)
 		draw.point((centre_x, centre_y), (1,1,1))
 		for i in range(0, points):
-			if angle_array[i] == 360:
-				angle_array[i] = 0.0
+#			if angle_array[i] == 360:
+#				angle_array[i] = 0.0
 
-			if angle_array[i] == 0.0:
-				length_x = -distance_array[i]
-				length_y = 0
-			elif angle_array[i] == 90.0:
-				length_x = 0
-				length_y = distance_array[i]
-			elif angle_array[i] == 180.0:
-				length_x = distance_array[i]
-				length_y = 0
-			elif angle_array[i] == 270.0:
-				length_x = 0
-				length_y = -distance_array[i]
-			else:
-				sine_distance = (math.sin(math.radians(angle_array[i]))*(distance_array[i]))
-				cosi_distance = (math.cos(math.radians(angle_array[i]))*(distance_array[i]))
-				
-				length_x = cosi_distance
-				length_y = sine_distance
+#			if angle_array[i] == 0.0:
+#				length_x = -distance_array[i]
+#				length_y = 0
+#			elif angle_array[i] == 90.0:
+#				length_x = 0
+#				length_y = distance_array[i]
+#			elif angle_array[i] == 180.0:
+#				length_x = distance_array[i]
+#				length_y = 0
+#			elif angle_array[i] == 270.0:
+#				length_x = 0
+#				length_y = -distance_array[i]
+#			else:
+
+			sine_distance = (math.sin(math.radians(angle_array[i]))*(distance_array[i]))
+			cosi_distance = (math.cos(math.radians(angle_array[i]))*(distance_array[i]))
+			
+			length_x = cosi_distance
+			length_y = sine_distance
 
 			length_x = length_x/scaler
 			length_y = length_y/scaler			
