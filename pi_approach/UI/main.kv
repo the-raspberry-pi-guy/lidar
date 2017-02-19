@@ -135,16 +135,12 @@ ScreenManagement:
 				id: onoffswitch2
 				active: True
 				on_active: root.power_off()
-#			ToggleButton:
-#				id: enable_camera
-#				markup:True
-#				text:"[size=18]Enable\nCamera\nModule[/size]"
 		Scatter:
 			size_hint_x:None
 			size_hint_y:None
 			height:yheight-bar_height_width
 			width:xwidth-bar_height_width
-			scale_max: 2
+			scale_max: 3
 			Image:
 				id: output_image
 				size: self.texture_size

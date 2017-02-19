@@ -24,7 +24,7 @@ distance = False
 stepper = False
 distance_connection = 0
 stepper_connection = 0
-accuracy_limit = 5000
+accuracy_limit = 4000
 
 class Communication(threading.Thread):
 	def run(self):
@@ -133,12 +133,6 @@ class MainScreen(Screen):
 				self.angle -= 1.8
 
 			self.angle = angle_copy
-			distances = []
-			positions = []
-			for i in range(0,199):
-				positions.append(i*1.8)
-			for i in range (0,199):
-				distances.append(200)
 			print distances
 			print positions
 			source = self.draw_map(distances, positions)
@@ -159,7 +153,7 @@ class MainScreen(Screen):
 		map = Image.new("RGBA", dimensions)
 
 		draw = ImageDraw.Draw(map)
-		draw.point((centre_x, centre_y), (0,0,0))
+		draw.point((centre_x, centre_y), (1,1,1))
 		for i in range(0, points):
 			if angle_array[i] == 360:
 				angle_array[i] = 0.0
@@ -179,22 +173,10 @@ class MainScreen(Screen):
 			else:
 				sine_distance = (math.sin(math.radians(angle_array[i]))*(distance_array[i]))
 				cosi_distance = (math.cos(math.radians(angle_array[i]))*(distance_array[i]))
+				
+				length_x = cosi_distance
+				length_y = sine_distance
 
-				if (angle_array[i] > 0) and (angle_array[i] < 90):
-					length_x = cosi_distance
-					length_y = +sine_distance
-				elif (angle_array[i] > 90) and (angle_array[i] < 180):
-					length_x = +cosi_distance
-					length_y = +sine_distance
-				elif (angle_array[i] > 180) and (angle_array[i] < 270):
-					length_x = +cosi_distance
-					length_y = sine_distance
-				elif (angle_array[i] > 270) and (angle_array[i] < 360):
-					length_x = cosi_distance
-					length_y = sine_distance
-				else:
-					print "ERROR"
-			
 			length_x = length_x/scaler
 			length_y = length_y/scaler			
 		
