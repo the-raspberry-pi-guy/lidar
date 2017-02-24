@@ -1,5 +1,5 @@
 # PicoBorgRev.py
-# Library to interface between Raspberry Pi and PicoBorgRev - the stepper motor controller
+# Library to interface between a Raspberry Pi (the stepper motor subsystem) and PicoBorgRev - the stepper motor controller
 # Original Author: Freeburn Robotics Limited
 # Modified by Matthew Timmons-Brown
 
