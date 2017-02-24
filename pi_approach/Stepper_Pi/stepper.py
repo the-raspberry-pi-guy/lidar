@@ -40,6 +40,7 @@ class stepper_controller(object):
 	# Attempts connection with the wireless user interface and verifies the subsystem
 	def setup_handshake(self):
 		connected = False
+		# Repeat until connected
 		while not connected:
 			try:
 				client.socket_connection()
@@ -48,6 +49,7 @@ class stepper_controller(object):
 				print "Failure"
 				time.sleep(2)
 		received_communication = client.receive_data()
+		# Actual handshake process, awaiting verification message
 		if received_communication == "VERIFY?":
 			hand_shake = "STEPPER!"
 			client.send_data(hand_shake)
@@ -109,7 +111,7 @@ class stepper_controller(object):
 			print result
 			client.send_data(str(result))
 			self.move_steps(1)
-		# Power donwn
+		# Power down
 		if received_communication == "POWER-OFF":
 			subprocess.call(powerdown)
 			
