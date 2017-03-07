@@ -1,18 +1,29 @@
+# main.kv
+# Kivy language code to define the nature of the various aspects of the UI
+# Fully touch enabled
+# Author: Matthew Timmons-Brown
+
 #:kivy 1.9.2
 
+# Define some global variables for use in the layout
 #:set bar_height_width 100
 #:set black [0,0,0,1]
 #:set yheight 480
 #:set xwidth 800
 
+# Create a screen manager with the Init screen and Main screen
 ScreenManagement:
 	InitScreen:
 	MainScreen:	
 
+# Init Screen
+# Code to define the look of the Init screen
 <InitScreen>:
 	name:"initial"
+	# Base structure of UI on a 2x2 grid
 	GridLayout:
 		canvas.before:
+			# Set background image and draw border bars
 			Rectangle:
 				size:self.size
 				source:"Background.png"
@@ -26,12 +37,16 @@ ScreenManagement:
 				size:[xwidth,5]
 		cols: 2
 		rows: 2
+
+		# Put logo in place
 		Image:
 			source:"logo.png"
 			size_hint_x:None
 			size_hint_y:None
 			height:bar_height_width
 			width:bar_height_width
+
+		# Add text to explain what the user has to do to progress to the main screen
 		Label:
 			text:"Initialising. Power on stepper motor and distance modules now!"
 			color:black
@@ -41,12 +56,17 @@ ScreenManagement:
 			valign:"center"
 			size_hint_y:None
 			height:bar_height_width
+
+		# Add on/off switch
 		Switch:
 			id: onoffswitch
 			active: True
+			# If switch is pressed, call the power_off() function
 			on_active: root.power_off()
 			size_hint_x:None
 			width:bar_height_width
+
+		# Create 3 boxes to house the different NO/OK messages for the subsystem
 		BoxLayout:
 			orientation:"horizontal"
 			Label:
@@ -70,10 +90,14 @@ ScreenManagement:
 				valign:"top"
 				color:black
 
+# Main Screen
+# Code to define the look of the main screen
 <MainScreen>:
 	name:"main"
+	# Base structure of UI on a 2x2 grid
 	GridLayout:
 		canvas.before:
+			# Set background image and draw border bars
 			Rectangle:
 				size:self.size
 				source:"Background.png"
@@ -87,12 +111,16 @@ ScreenManagement:
 				size:[xwidth,5]
 		cols: 2
 		rows: 2	
+
+		# Put logo in place
 		Image:
 			source:"logo.png"
 			size_hint_x:None
 			size_hint_y:None
 			height:bar_height_width
 			width:bar_height_width
+
+		# Nest a grid layout for top sidebar with 3 elements
 		GridLayout:
 			cols: 3
 			rows: 1
@@ -100,25 +128,35 @@ ScreenManagement:
 			size_hint_y:None
 			height:bar_height_width
 			width:xwidth-bar_height_width
+			
+			# Add a slider for angle selection
 			Slider:
 				id: value_slider
 				min:0
 				max:360
 				step:1
 				value:0
+				# When the value changes, call change_value()
 				on_value:root.change_value()
 				size_hint_x:None
 				width:4*bar_height_width
+
+			# Add a label to display current angle selection on slider
 			Label:
 				id: value_label
 				size_hint_x:None
 				width:20
 				markup:True
+
+			# Add SCAN button - user presses this to start the process
 			Button:
 				size_hint_y:None
 				height:(bar_height_width/100)*92
 				text:"SCAN"
+				# When pressed, start to scan by calling scan()
 				on_press:root.scan()
+
+		# Nest a grid layout for left sidebar with 2 elements
 		GridLayout:
 			cols:1
 			rows:2	
@@ -127,14 +165,21 @@ ScreenManagement:
 			height:yheight-bar_height_width-10
 			width:bar_height_width
 			padding:3
+
+			# Add enabler button to turn the lidar module on/off
 			ToggleButton:
 				id: enable_lidar
 				markup:True
 				text:"[size=18]Enable\nLidar\nModule[/size]"
+
+			# Add power off button
 			Switch:
 				id: onoffswitch2
 				active: True
 				on_active: root.power_off()
+
+		# Create a scatter widget - this is where the output map will be outputted
+		# Scatter widgets can be manipulated on the touchscreen in all directions
 		Scatter:
 			size_hint_x:None
 			size_hint_y:None
