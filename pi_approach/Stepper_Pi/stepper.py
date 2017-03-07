@@ -19,7 +19,7 @@ motor = PicoBorgRev.PicoBorgRev()
 client = cli.Client()
 
 class stepper_controller(object):
-	""" An all-powerful stepper motor controller"""
+	"""A stepper motor controller"""
 	
 	# Set class attributes
 	current_step = -1
