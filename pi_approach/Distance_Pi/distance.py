@@ -19,7 +19,7 @@ arduino_dist = serial.Serial('/dev/ttyUSB0',9600)
 client = cli.Client()
 
 class distance_controller(object):
-	"""An all-powerful distance-finding controller"""
+	"""A distance-finding controller"""
 
 	# Get distance method
 	# Reads and returns the distance reported from Arduino over serial
