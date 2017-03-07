@@ -98,8 +98,6 @@ class stepper_controller(object):
 			self.degrees = self.progress*1.8
 			time.sleep(stepper_controller.step_delay)
         		count -= 1
-		
-		motor.MotorsOff()
 
 	# Active listen method
 	# Waits for communication from the wireless user interface and then acts upon communication
