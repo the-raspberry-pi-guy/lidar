@@ -8,7 +8,8 @@ import time
 import sys
 import subprocess
 sys.path.insert(0, "/home/pi/lidar/pi_approach/Libraries")
-# Import libraries that I have created to make communication and control easier
+# Import libraries that I have created to make communication
+# and control easier
 import PicoBorgRev
 import serverxclient as cli
 
@@ -20,13 +21,15 @@ client = cli.Client()
 
 class stepper_controller(object):
 	"""A stepper motor controller"""
-	
+
 	# Set class attributes
 	current_step = -1
 	power = 0.5 # Value of power to coils. 1 is full power
-	motor_sequence = [[power, power], [power, -power], [-power, -power], [-power, power]] # Order for stepping and movement of motor
+	motor_sequence = [[power, power], [power, -power],
+							[-power, -power], [-power, power]]
+							# Order for stepping and movement of motor
 	step_delay = 0.002  # Delay between steps
-	
+
 	progress = 0
 	degrees = 0
 
@@ -35,9 +38,10 @@ class stepper_controller(object):
 	def __init__(self):
 		motor.Init()
 		motor.ResetEpo()
-	
+
 	# Handshake method
-	# Attempts connection with the wireless user interface and verifies the subsystem
+	# Attempts connection with the wireless user
+	# interface and verifies the subsystem
 	def setup_handshake(self):
 		connected = False
 		# Repeat until connected
@@ -66,13 +70,13 @@ class stepper_controller(object):
 			count *= -1
 		else:
 			dir = 1
-					
+
 		# While there are steps still remaining
 		while (count > 0):
 			data_list = []
 			# If this is the first move, set starting position
 		        if self.current_step == -1:
-            			drive = self.motor_sequence[-1] # Access list from right
+            			drive = self.motor_sequence[-1] # Access list R-L
             			motor.SetMotor1(drive[0])
             			motor.SetMotor2(drive[1])
             			self.current_step = 0
@@ -81,17 +85,21 @@ class stepper_controller(object):
 
 			# Wrap step when end of sequence reached
 	        	if self.current_step < 0:
-        	    		self.current_step = len(stepper_controller.motor_sequence) - 1
-        		elif self.current_step >= len(stepper_controller.motor_sequence):
-            			self.current_step = 0
+        	    		self.current_step =
+							len(stepper_controller.motor_sequence) - 1
+        		elif self.current_step >=
+							len(stepper_controller.motor_sequence):
+            					self.current_step = 0
 
         		# For this step set the required drive values
         		if self.current_step < len(stepper_controller.motor_sequence):
-            			drive = stepper_controller.motor_sequence[self.current_step]
+            			drive = stepper_controller.
+											motor_sequence[self.current_step]
             			motor.SetMotor1(drive[0])
             			motor.SetMotor2(drive[1])
-        		
-			# Update progress and degrees attributes with motor's current position
+
+			# Update progress and degrees attributes with
+			# motor's current position
 			self.progress += 1
 			if self.progress > 200:
 				self.progress -= 200
@@ -100,7 +108,8 @@ class stepper_controller(object):
         		count -= 1
 
 	# Active listen method
-	# Waits for communication from the wireless user interface and then acts upon communication
+	# Waits for communication from the wireless user interface
+	# and then acts upon communication
 	def active_listen(self):
 		received_communication = client.receive_data()
 		# Send position and rotate by 1
@@ -112,7 +121,7 @@ class stepper_controller(object):
 		# Power down
 		if received_communication == "POWER-OFF":
 			subprocess.call(powerdown)
-			
+
 	# Main method
 	# Runs handshake and then forever runs active listening method
 	def main(self):
@@ -120,7 +129,7 @@ class stepper_controller(object):
 		while True:
 			self.active_listen()
 
-# Create class instance and run program	
+# Create class instance and run program
 if __name__ == "__main__":
 	stepp = stepper_controller()
 	stepp.main()
