@@ -40,7 +40,8 @@ class Communication(threading.Thread):
 	"""A communication thread that connects to other subsystems in the background"""
 
 	# Run method - automatically run when thread is started
-	# Constantly waits for other two subsystems to come online, then changes to the main application page
+	# Constantly waits for other two subsystems to come online, then changes to
+	# the main application page
 	def run(self):
 		self.setup()
 		# While either of the subsystems are not connected
@@ -57,21 +58,24 @@ class Communication(threading.Thread):
 	def setup(self):
 		server.setup_server()
 		print "SUCCESS ON BIND"
-	
+
 	# Awaiting socket method
-	# Waits for an incoming socket and then returns that socket's connection and address details
+	# Waits for an incoming socket and then returns that socket's
+	# connection and address details
 	def awaiting_socket(self):
 		print "AWAITING"
 		(connection, address) = server.socket_reception()
 		return (connection, address)
 
 	# Test socket
-	# Identifies which subsystem the incoming connection is and changes global variables to indicate correct pairing
+	# Identifies which subsystem the incoming connection is
+	# and changes global variables to indicate correct pairing
 	def test_socket(self, connection):
 		# Demands verification from subsystem
 		server.send_data(connection,"VERIFY?")
 		data_back = server.receive_data(connection)
-		# If data_back is either subsystem, then change the Init screen labels from NO to OK!
+		# If data_back is either subsystem, then change the Init
+		# screen labels from NO to OK!
 		if data_back == "DISTANCE!":
 			# set distance to OK
 			application.current_screen.distance_on()
@@ -100,24 +104,24 @@ class InitScreen(Screen):
 		# If the switch is false, turn the system off
 		if onoff_value == False:
 			subprocess.call(powerdown)
-	
+
 	# Distance ON! method
 	# Changes the "NO" distance label to "OK!" when called
 	def distance_on(self, *args):
-		distance_label = self.ids["distance_label"]
-		distance_label.text = "[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]" # (Markup text)
-	
+		distance_l = self.ids["distance_label"]
+		distance_l.text="[size=40]Distance:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
+
 	# Stepper ON! method
 	# Changes the "NO" stepper label to "OK!" when called
 	def stepper_on(self, *args):
-		stepper_label = self.ids["stepper_label"]
-		stepper_label.text = "[size=40]Stepper:[/size]\n\n[size=60][color=008000]OK[/color][/size]" # (Markup text)
-				
+		stepper_l = self.ids["stepper_label"]
+		stepper_l.text="[size=40]Stepper:[/size]\n\n[size=60][color=008000]OK[/color][/size]"
+
 class MainScreen(Screen):
 	"""A class to define the behaviour of the MainScreen"""
 
 	# Current stepper motor angle
-	angle = 0	
+	angle = 0
 
 	# Power off method
 	# If shutdown switch is toggled, turn off other subsystems and shut down this device
@@ -138,7 +142,7 @@ class MainScreen(Screen):
 		value_label = self.ids["value_label"]
 		# Change label to slider's current value
 		value_label.text = "[size=10]" + str(self.angle) + "[/size]"
-	
+
 	# Scan method
 	# Called when the SCAN button is pressed
 	# Collects data from distance subsytem and stepper motor subsystem
@@ -156,7 +160,8 @@ class MainScreen(Screen):
 			angle_copy = self.angle
 
 			# For loop to discard the first 20 readings from the distance sensor
-			# Sensor is cheap and found that the first 20 odd values are not usually consistent - so discard them
+			# Sensor is cheap and found that the first 20 odd values are not
+			# usually consistent - so discard them
 			for i in range(0,20):
 				server.send_data(distance_connection, "FIRE")
 				discarded_response = server.receive_data(distance_connection)
@@ -168,24 +173,26 @@ class MainScreen(Screen):
 				server.send_data(distance_connection, "FIRE")
 				distance_response = server.receive_data(distance_connection)
 
-				# While the distance is greater than the accuracy limit, and the attempts are less than 3, try again
-				# in the hope to get better data.
+				# While the distance is greater than the accuracy limit, and the
+				# attempts are less than 3, try again in the hope to get better data.
 				tries = 0
 				while (float(distance_response[:-2]) > accuracy_limit) and (tries < 3):
 					server.send_data(distance_connection, "FIRE")
 					distance_response = server.receive_data(distance_connection)
 					tries += 1
 
-				# Demand current position of stepper motor, and then rotate by 1 step for the next distance
+				# Demand current position of stepper motor, and then rotate by 1 step
+				# for the next distance
 				server.send_data(stepper_connection, "REPORT-ROTATE")
 				stepper_position = server.receive_data(stepper_connection)
-	
-				# Convert the values into floats and remove unnecessary elements of communication
+
+				# Convert the values into floats and remove unnecessary elements
+				# of communication
 				point_distance = float(distance_response[:-2])
 				point_position = float(stepper_position)
 
 				print (point_position, point_distance)
-				
+
 				# If distance is within the accuracy_limit, store and record distance
 				# Otherwise distance is not recorded. This is to prevent outliers
 				if point_distance <= accuracy_limit:
@@ -197,7 +204,7 @@ class MainScreen(Screen):
 
 			# Reset current angle
 			self.angle = angle_copy
-			
+
 			# Draw map with the distances and position data that has been gathered
 			source = self.draw_map(distances, positions)
 			# Display the outputted PNG image to the user for manipulation and viewing
@@ -207,15 +214,17 @@ class MainScreen(Screen):
 			print "Nothing enabled"
 
 	# Draw map method
-	# Main map drawing algorithm - creates image from supplied distances and position data and returns path to that image
+	# Main map drawing algorithm - creates image from supplied distances and position
+	# data and returns path to that image
 	def draw_map(self, distance_array, angle_array):
 		# Dimensions for the image
 		dimensions = (700,380)
 		points = len(distance_array)-1
 		centre_x = dimensions[0]/2
 		centre_y = dimensions[1]/2
-		
-		# Create a scaling factor for the end image to ensure points are within the allocated space
+
+		# Create a scaling factor for the end image to ensure points are within
+		# the allocated space
 		scaler = (centre_x+accuracy_limit)/dimensions[0]
 		# Open a new image with the dimensions previous
 		map = Image.new("RGBA", dimensions)
@@ -231,14 +240,14 @@ class MainScreen(Screen):
 			# Use trigonometry to calculate the position of the point to plot on map
 			sine_distance = (math.sin(math.radians(angle_array[i]))*(distance_array[i]))
 			cosi_distance = (math.cos(math.radians(angle_array[i]))*(distance_array[i]))
-			
+
 			length_x = cosi_distance
 			length_y = sine_distance
 
 			# Divide by scaling factor to keep within the dimensions of the image
 			length_x = length_x/scaler
-			length_y = length_y/scaler			
-			
+			length_y = length_y/scaler
+
 			# Create set of coordinates to plot
 			coord_x = centre_x + length_x
 			coord_y = centre_y + length_y
@@ -253,10 +262,10 @@ class MainScreen(Screen):
 		path = "/home/pi/lidar/pi_approach/UI/scans/" + str(random.randint(0,1000)) + ".png"
 		map.save(path, "PNG")
 		return path
-		
+
 
 class ScreenManagement(ScreenManager):
-	"""Screen Manager - does behind-the-scenes screen management for transition between Init and Main screen"""
+	"""Screen Manager - does screen management for transition between Init & Main Screen"""
 	pass
 
 # Load up Kivy file that defines how the UI looks
