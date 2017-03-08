@@ -28,7 +28,8 @@ class distance_controller(object):
 		return distance
 
 	# Handshake method
-	# Attempts connection with the wireless user interface and verifies the subsytem
+	# Attempts connection with the wireless user interface and
+	# verifies the subsytem
 	def setup_handshake(self):
 		connected = False
 		# Repeat until connected
@@ -48,7 +49,8 @@ class distance_controller(object):
 			print "Unidentified communication"
 
 	# Active listen method
-	# Waits for communication from the wireless user interface and then acts upon communication
+	# Waits for communication from the wireless user interface
+	# and then acts upon communication
 	def active_listen(self):
 		received_communication = client.receive_data()
 		# Verify distance data and send

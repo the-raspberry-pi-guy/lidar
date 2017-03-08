@@ -1,5 +1,7 @@
 /* arduino_distance
- * Uses VL53L0X Time-of-Flight Lidar sensor for distance measurement. Hand crafted averaging for greater precision. Customisable degree of accuracy
+ * Uses VL53L0X Time-of-Flight Lidar sensor for distance measurement.
+ * Hand crafted averaging for greater precision.
+ * Customisable degree of accuracy
  * Author: Matthew Timmons-Brown
  */
 
@@ -21,7 +23,7 @@ void setup()
   Wire.begin();
   sensor.init();
   sensor.setTimeout(500);
-  sensor.setMeasurementTimingBudget(100000); // For higher accuracy measurement (up to 100ms)(value in microseconds)
+  sensor.setMeasurementTimingBudget(100000); // For higher accuracy
 }
 
 // Main program loop (runs forever)
@@ -29,10 +31,15 @@ void loop()
 {
   // Initiliase variables
   int avg;
-  int lidar_array[average_trials]; // Create array
-  populate_lidar_array(lidar_array); // Pass array into populate_lidar_array function and fill with distance values
-  avg = average_lidar_array(lidar_array); // Average array values and store in avg variable
-  Serial.print(avg); // Send the final value to the serial port, for the Pi to receive
+  // Create array
+  int lidar_array[average_trials];
+  // Pass array into populate_lidar_array function and fill with
+  // distance values
+  populate_lidar_array(lidar_array);
+  // Average array values and store in avg variable
+  avg = average_lidar_array(lidar_array);
+  // Send the final value to the serial port, for the Pi to receive
+  Serial.print(avg);
   Serial.println();
 }
 
@@ -42,7 +49,8 @@ int populate_lidar_array(int lidar_array[])
 {
   for (int i = 0; i < average_trials; i = i +1)
   {
-    // For each index of the array, get distance and store distance at that index
+    // For each index of the array, get distance
+    // and store distance at that index
     lidar_array[i] = get_distance();
   }
 }
@@ -55,7 +63,7 @@ int average_lidar_array(int lidar_array[])
   for (int i = 0; i < average_trials; i = i + 1)
   {
     // Sum each value in the array
-    sum += lidar_array[i];  
+    sum += lidar_array[i];
   }
   int result; // Work out mean average and return result
   result = ((float) sum) / average_trials;
@@ -69,4 +77,3 @@ int get_distance()
   // Get distance in millimeters from lidar sensor
   return sensor.readRangeSingleMillimeters();
 }
-
